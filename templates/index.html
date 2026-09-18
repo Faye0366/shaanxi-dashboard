@@ -20,7 +20,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1f9e8f 0%, #15776b 100%);
             color: #fff;
             padding: 24px 32px;
             border-radius: 12px;
@@ -28,7 +28,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 12px rgba(31, 158, 143, 0.3);
         }
 
         .header h1 {
@@ -85,7 +85,7 @@
             order: 3;
         }
 
-        .metric-card.total .value { color: #667eea; }
+        .metric-card.total .value { color: #1f9e8f; }
         .metric-card.public .value { color: #e85d6a; }
         .metric-card.private .value { color: #3ba272; }
         .metric-card.external .value { color: #fac858; }
@@ -113,7 +113,7 @@
         }
 
         .metric-card:not(.yearly) {
-            border-left: 3px solid #667eea;
+            border-left: 3px solid #1f9e8f;
         }
 
         .metric-card.yearly .label::before {
@@ -126,7 +126,7 @@
         .metric-card:not(.yearly) .label::before {
             content: "当月 · ";
             font-size: 12px;
-            color: #667eea;
+            color: #1f9e8f;
             font-weight: 600;
         }
 
@@ -287,7 +287,7 @@
         }
 
         .chart-controls select:focus {
-            border-color: #667eea;
+            border-color: #1f9e8f;
         }
 
         .checkbox-group {
@@ -308,7 +308,7 @@
 
         .checkbox-item input[type="checkbox"] {
             cursor: pointer;
-            accent-color: #667eea;
+            accent-color: #1f9e8f;
         }
 
         .chart-container {
@@ -378,7 +378,7 @@
         .top-product-table .rank-1 { background: #e85d6a; }
         .top-product-table .rank-2 { background: #fac858; }
         .top-product-table .rank-3 { background: #3ba272; }
-        .top-product-table .rank-4 { background: #667eea; }
+        .top-product-table .rank-4 { background: #1f9e8f; }
         .top-product-table .rank-5 { background: #9c27b0; }
 
         .top-product-table .product-name {
@@ -585,7 +585,7 @@ let monthlyChart, dailyChart, channelChart;
 
 // ===== 颜色配置 =====
 const COLORS = {
-    total: '#667eea',
+    total: '#1f9e8f',
     '公域': '#e85d6a',
     '私域': '#3ba272',
     '外部渠道': '#fac858'
