@@ -367,7 +367,7 @@
             justify-content: flex-end;
         }
 
-        /* ===== 充流量TOP20 对比表格 ===== */
+        /* ===== 充流量TOP10 对比表格 ===== */
         .cll-rank {
             display: inline-block;
             width: 24px;
@@ -547,31 +547,6 @@
     </div>
 </div>
 
-<!-- ===== 私域渠道点位对比 ===== -->
-<div class="table-section">
-    <div class="table-title">私域渠道点位单量对比（投放点位）</div>
-    <div class="table-chart-wrapper">
-        <div class="table-side">
-            <table class="compare-table" id="channelPrivateTable">
-                <thead>
-                    <tr>
-                        <th style="text-align:left;">投放点位</th>
-                        <th>时段A单量</th>
-                        <th>时段B单量</th>
-                        <th>差值</th>
-                        <th>涨跌幅</th>
-                        <th>趋势</th>
-                    </tr>
-                </thead>
-                <tbody id="channelPrivateTbody"></tbody>
-            </table>
-        </div>
-        <div class="chart-side">
-            <div id="channelPrivateChart" class="chart-container"></div>
-        </div>
-    </div>
-</div>
-
 <!-- ===== 充流量频道各投放位置产品对比 ===== -->
 <div class="table-section">
     <div class="table-title">充流量频道各投放位置产品涨跌对比（点击位置展开产品明细）</div>
@@ -592,9 +567,9 @@
     </div>
 </div>
 
-<!-- ===== 充流量频道TOP20产品对比 ===== -->
+<!-- ===== 充流量频道TOP10产品对比 ===== -->
 <div class="table-section">
-    <div class="table-title">充流量频道销量TOP20产品对比（按时段B单量排序）</div>
+    <div class="table-title">充流量频道销量TOP10产品对比（按时段B单量排序）</div>
     <div style="overflow-x:auto;">
         <table class="compare-table" id="cllTable">
             <thead>
@@ -613,27 +588,6 @@
     </div>
 </div>
 
-<!-- ===== 公域移动营业厅·精选流量 产品单量对比 ===== -->
-<div class="table-section">
-    <div class="table-title">公域移动营业厅·精选流量 产品单量对比（U=公域 &amp; V=移动营业厅 &amp; W=精选流量，按时段B单量排序）</div>
-    <div style="overflow-x:auto;">
-        <table class="compare-table" id="mallYytTable">
-            <thead>
-                <tr>
-                    <th>排名</th>
-                    <th style="text-align:left;">产品名称</th>
-                    <th>时段A单量</th>
-                    <th>时段B单量</th>
-                    <th>差值</th>
-                    <th>涨跌幅</th>
-                    <th>趋势</th>
-                </tr>
-            </thead>
-            <tbody id="mallYytTbody"></tbody>
-        </table>
-    </div>
-</div>
-
 <script>
 // ===== 数据会被嵌入这里 =====
 // ${DATA_PLACEHOLDER}
@@ -643,7 +597,6 @@ let currentRangeA = null;  // {dates: [...]}
 let currentRangeB = null;
 let currentCompareResult = null;
 let channelPublicChart = null;
-let channelPrivateChart = null;
 
 // ===== 工具函数 =====
 function formatNumber(n) {
@@ -798,10 +751,8 @@ function executeCompare(datesA, datesB, labelA, labelB) {
     renderSummary(labelA, labelB, compareList);
     renderProductTable(compareList);
     renderChannelPublicTable(datesA, datesB);
-    renderChannelPrivateTable(datesA, datesB);
     renderCllTopTable(datesA, datesB);
     renderCllLocationTable(datesA, datesB);
-    renderMallYytTable(datesA, datesB);
 }
 
 // ===== 执行对比（按月 / 自定义日期） =====
@@ -988,7 +939,7 @@ function renderDetailTable(details) {
     return html;
 }
 
-// ===== 渲染充流量TOP20对比表格 =====
+// ===== 渲染充流量TOP10对比表格 =====
 function renderCllTopTable(datesA, datesB) {
     const cllData = COMPARE_DATA.cll_product_daily || {};
 
@@ -1012,7 +963,7 @@ function renderCllTopTable(datesA, datesB) {
         }
     }
 
-    // 合并所有产品，按时段B单量降序取TOP20
+    // 合并所有产品，按时段B单量降序取TOP10
     const allProducts = new Set([...Object.keys(sumA), ...Object.keys(sumB)]);
     const list = [];
     for (const product of allProducts) {
@@ -1022,21 +973,21 @@ function renderCllTopTable(datesA, datesB) {
         const pct = valA > 0 ? ((valB - valA) / valA) * 100 : null;
         list.push({ product, valA, valB, diff, pct });
     }
-    // 按时段B单量降序，取TOP20
+    // 按时段B单量降序，取TOP10
     list.sort((a, b) => b.valB - a.valB);
-    const top20 = list.slice(0, 20);
+    const top10 = list.slice(0, 10);
 
     // 趋势条缩放：用差值绝对值的最大值
-    const maxAbsDiff = top20.length > 0 ? Math.max(...top20.map(i => Math.abs(i.diff)), 1) : 1;
+    const maxAbsDiff = top10.length > 0 ? Math.max(...top10.map(i => Math.abs(i.diff)), 1) : 1;
 
     const tbody = document.getElementById('cllTbody');
     let html = '';
 
-    if (top20.length === 0) {
+    if (top10.length === 0) {
         html = '<tr><td colspan="7" style="color:#ccc;text-align:center;padding:16px;">所选时段无充流量频道数据</td></tr>';
     } else {
-        for (let i = 0; i < top20.length; i++) {
-            const item = top20[i];
+        for (let i = 0; i < top10.length; i++) {
+            const item = top10[i];
             const diffStr = (item.diff >= 0 ? '+' : '') + formatNumber(item.diff);
             const pctStr = item.pct !== null ? formatPct(item.pct) : '';
             const tag = item.valA === 0 && item.valB > 0 ? '<span class="tag-new">新增</span>' :
@@ -1063,98 +1014,6 @@ function renderCllTopTable(datesA, datesB) {
     tbody.innerHTML = html;
 }
 
-// ===== 渲染公域移动营业厅·精选流量 产品单量对比表格 =====
-function renderMallYytTable(datesA, datesB) {
-    const mallData = COMPARE_DATA.mall_yyt_daily || {};
-
-    // 聚合时段A
-    const sumA = {};
-    for (const date of datesA) {
-        const dayData = mallData[date];
-        if (!dayData) continue;
-        for (const [name, val] of Object.entries(dayData)) {
-            sumA[name] = (sumA[name] || 0) + val;
-        }
-    }
-
-    // 聚合时段B
-    const sumB = {};
-    for (const date of datesB) {
-        const dayData = mallData[date];
-        if (!dayData) continue;
-        for (const [name, val] of Object.entries(dayData)) {
-            sumB[name] = (sumB[name] || 0) + val;
-        }
-    }
-
-    // 合并所有产品，按时段B单量降序
-    const allProducts = new Set([...Object.keys(sumA), ...Object.keys(sumB)]);
-    const list = [];
-    for (const product of allProducts) {
-        const valA = sumA[product] || 0;
-        const valB = sumB[product] || 0;
-        const diff = valB - valA;
-        const pct = valA > 0 ? ((valB - valA) / valA) * 100 : null;
-        list.push({ product, valA, valB, diff, pct });
-    }
-    list.sort((a, b) => b.valB - a.valB);
-
-    // 趋势条缩放：用差值绝对值的最大值
-    const maxAbsDiff = list.length > 0 ? Math.max(...list.map(i => Math.abs(i.diff)), 1) : 1;
-
-    const tbody = document.getElementById('mallYytTbody');
-    let html = '';
-
-    if (list.length === 0) {
-        html = '<tr><td colspan="7" style="color:#ccc;text-align:center;padding:16px;">所选时段无公域移动营业厅·精选流量数据</td></tr>';
-    } else {
-        for (let i = 0; i < list.length; i++) {
-            const item = list[i];
-            const diffStr = (item.diff >= 0 ? '+' : '') + formatNumber(item.diff);
-            const pctStr = item.pct !== null ? formatPct(item.pct) : '';
-            const tag = item.valA === 0 && item.valB > 0 ? '<span class="tag-new">新增</span>' :
-                        item.valB === 0 && item.valA > 0 ? '<span class="tag-gone">消失</span>' : '';
-            const barWidth = Math.max(2, (Math.abs(item.diff) / maxAbsDiff) * 100);
-            const barClass = item.diff >= 0 ? 'up' : 'down';
-            const rankCls = `cll-rank-${i + 1}`;
-
-            html += `<tr>
-                <td><span class="cll-rank ${rankCls}">${i + 1}</span></td>
-                <td style="text-align:left;font-weight:600;">${item.product}</td>
-                <td>${formatNumber(item.valA)}</td>
-                <td>${formatNumber(item.valB)}</td>
-                <td class="${diffClass(item.diff)}">${diffStr}</td>
-                <td class="${pctClass(item.pct)}">${pctStr} ${tag}</td>
-                <td>
-                    <div class="trend-container">
-                        <div class="trend-bar ${barClass}" style="width:${barWidth}px;"></div>
-                    </div>
-                </td>
-            </tr>`;
-        }
-    }
-
-    // 汇总行：全部产品合计对比
-    let gA = 0, gB = 0;
-    for (const item of list) { gA += item.valA; gB += item.valB; }
-    const gDiff = gB - gA;
-    const gPct = gA > 0 ? (gDiff / gA) * 100 : null;
-    const gDiffStr = (gDiff >= 0 ? '+' : '') + formatNumber(gDiff);
-    const gPctStr = gPct !== null ? formatPct(gPct) : '';
-    const gBarClass = gDiff >= 0 ? 'up' : 'down';
-    const gBarWidth = Math.max(2, (Math.abs(gDiff) / maxAbsDiff) * 100);
-    html += `<tr style="background:#f0f0fa;font-weight:700;">
-        <td></td>
-        <td style="text-align:left;">汇总（全部产品）</td>
-        <td style="font-weight:700;">${formatNumber(gA)}</td>
-        <td style="font-weight:700;">${formatNumber(gB)}</td>
-        <td class="${diffClass(gDiff)}" style="font-weight:700;">${gDiffStr}</td>
-        <td class="${pctClass(gPct)}" style="font-weight:700;">${gPctStr}</td>
-        <td><div class="trend-container"><div class="trend-bar ${gBarClass}" style="width:${gBarWidth}px;"></div></div></td>
-    </tr>`;
-
-    tbody.innerHTML = html;
-}
 
 // ===== 渲染充流量频道各投放位置产品对比表格 =====
 function renderCllLocationTable(datesA, datesB) {
@@ -1468,162 +1327,6 @@ function renderChannelPublicChart(list) {
     });
 }
 
-// ===== 渲染私域渠道点位对比表格 =====
-function renderChannelPrivateTable(datesA, datesB) {
-    const data = COMPARE_DATA.channel_private_daily || {};
-
-    // 聚合时段A: {channel: count}
-    const sumA = {};
-    for (const date of datesA) {
-        const dayData = data[date];
-        if (!dayData) continue;
-        for (const [channel, count] of Object.entries(dayData)) {
-            sumA[channel] = (sumA[channel] || 0) + count;
-        }
-    }
-
-    // 聚合时段B
-    const sumB = {};
-    for (const date of datesB) {
-        const dayData = data[date];
-        if (!dayData) continue;
-        for (const [channel, count] of Object.entries(dayData)) {
-            sumB[channel] = (sumB[channel] || 0) + count;
-        }
-    }
-
-    // 构建对比列表
-    const allChannels = new Set([...Object.keys(sumA), ...Object.keys(sumB)]);
-    const list = [];
-    for (const channel of allChannels) {
-        const valA = sumA[channel] || 0;
-        const valB = sumB[channel] || 0;
-        const diff = valB - valA;
-        const pct = valA > 0 ? ((valB - valA) / valA) * 100 : null;
-        list.push({ channel, valA, valB, diff, pct });
-    }
-    // 自定义排序：承接页 → 移动营业厅 → 小程序 → 生活号
-    const PRI_ORDER = ['承接页', '移动营业厅', '小程序', '生活号'];
-    list.sort((a, b) => {
-        const ia = PRI_ORDER.indexOf(a.channel);
-        const ib = PRI_ORDER.indexOf(b.channel);
-        const sa = ia >= 0 ? ia : 999;
-        const sb = ib >= 0 ? ib : 999;
-        if (sa !== sb) return sa - sb;
-        return Math.abs(b.diff) - Math.abs(a.diff);
-    });
-
-    const maxAbsDiff = list.length > 0 ? Math.max(...list.map(i => Math.abs(i.diff)), 1) : 1;
-
-    const tbody = document.getElementById('channelPrivateTbody');
-    let html = '';
-
-    if (list.length === 0) {
-        html = '<tr><td colspan="6" style="color:#ccc;text-align:center;padding:16px;">所选时段无私域渠道点位数据</td></tr>';
-    } else {
-        for (const item of list) {
-            const diffStr = (item.diff >= 0 ? '+' : '') + formatNumber(item.diff);
-            const pctStr = item.pct !== null ? formatPct(item.pct) : '';
-            const tag = item.valA === 0 && item.valB > 0 ? '<span class="tag-new">新增</span>' :
-                        item.valB === 0 && item.valA > 0 ? '<span class="tag-gone">消失</span>' : '';
-            const barWidth = Math.max(2, (Math.abs(item.diff) / maxAbsDiff) * 100);
-            const barClass = item.diff >= 0 ? 'up' : 'down';
-
-            html += `<tr>
-                <td style="text-align:left;font-weight:600;">${item.channel}</td>
-                <td>${formatNumber(item.valA)}</td>
-                <td>${formatNumber(item.valB)}</td>
-                <td class="${diffClass(item.diff)}">${diffStr}</td>
-                <td class="${pctClass(item.pct)}">${pctStr} ${tag}</td>
-                <td>
-                    <div class="trend-container">
-                        <div class="trend-bar ${barClass}" style="width:${barWidth}px;"></div>
-                    </div>
-                </td>
-            </tr>`;
-        }
-    }
-
-    tbody.innerHTML = html;
-
-    // 渲染图表
-    renderChannelPrivateChart(list);
-}
-
-// ===== 渲染私域渠道点位对比图表 =====
-function renderChannelPrivateChart(list) {
-    const chartDom = document.getElementById('channelPrivateChart');
-    if (!chartDom) return;
-
-    if (channelPrivateChart) {
-        channelPrivateChart.dispose();
-    }
-    channelPrivateChart = echarts.init(chartDom);
-
-    if (list.length === 0) {
-        channelPrivateChart.setOption({
-            title: { text: '暂无数据', left: 'center', top: 'center', textStyle: { color: '#ccc', fontSize: 14 } }
-        });
-        return;
-    }
-
-    const categories = list.map(item => item.channel);
-    const valA = list.map(item => item.valA);
-    const valB = list.map(item => item.valB);
-
-    const labelA = currentRangeA ? currentRangeA.label : '时段A';
-    const labelB = currentRangeB ? currentRangeB.label : '时段B';
-
-    channelPrivateChart.setOption({
-        tooltip: {
-            trigger: 'axis',
-            axisPointer: { type: 'shadow' },
-            formatter: function(params) {
-                let html = params[0].name + '<br/>';
-                for (const p of params) {
-                    html += `${p.marker} ${p.seriesName}: ${formatNumber(p.value)}<br/>`;
-                }
-                return html;
-            }
-        },
-        legend: {
-            data: [labelA, labelB],
-            top: 0,
-            textStyle: { fontSize: 12 }
-        },
-        grid: {
-            left: '3%',
-            right: '5%',
-            bottom: '3%',
-            top: 40,
-            containLabel: true
-        },
-        xAxis: { type: 'value', axisLabel: { fontSize: 11 } },
-        yAxis: {
-            type: 'category',
-            data: categories,
-            inverse: true,
-            axisLabel: { fontSize: 12 }
-        },
-        series: [
-            {
-                name: labelA,
-                type: 'bar',
-                data: valA,
-                itemStyle: { color: '#5470c6', borderRadius: [0, 3, 3, 0] },
-                barGap: '10%',
-                barCategoryGap: '40%'
-            },
-            {
-                name: labelB,
-                type: 'bar',
-                data: valB,
-                itemStyle: { color: '#fac858', borderRadius: [0, 3, 3, 0] }
-            }
-        ]
-    });
-}
-
 // ===== 展开/折叠明细 =====
 function toggleDetail(index) {
     const row = document.getElementById('row-' + index);
@@ -1712,7 +1415,6 @@ function toggleSection(sec) {
         sec.querySelectorAll('.chart-container').forEach(function (c) {
             const id = c.id;
             if (id === 'channelPublicChart' && typeof channelPublicChart !== 'undefined' && channelPublicChart) channelPublicChart.resize();
-            if (id === 'channelPrivateChart' && typeof channelPrivateChart !== 'undefined' && channelPrivateChart) channelPrivateChart.resize();
         });
     }
 }
@@ -1721,7 +1423,6 @@ document.addEventListener('DOMContentLoaded', init);
 
 window.addEventListener('resize', function() {
     if (channelPublicChart) channelPublicChart.resize();
-    if (channelPrivateChart) channelPrivateChart.resize();
 });
 </script>
 
